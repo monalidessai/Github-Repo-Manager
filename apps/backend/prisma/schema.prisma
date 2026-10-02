@@ -1,0 +1,62 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+model User {
+  id             String   @id @default(uuid())
+  githubUsername String   @unique
+  name           String?
+  avatarUrl      String?
+  role           UserRole @default(USER)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model SystemConfig {
+  id                  String   @id @default("default")
+  repoPrefix          String   @default("pt-")
+  retentionDays       Int      @default(90)
+  warningDays         Int      @default(7)
+  defaultExpiryAction String   @default("delete")
+  githubOrg           String?
+  updatedAt           DateTime @updatedAt
+}
+
+model RepoOverride {
+  repoName         String   @id
+  customExpiryDate DateTime
+  customAction     String?
+  updatedAt        DateTime @updatedAt
+}
+
+model AuditLog {
+  id           String   @id @default(uuid())
+  actor        String
+  action       String
+  repository   String
+  timestamp    DateTime @default(now())
+  ipAddress    String
+  context      Json?
+  previousHash String?
+  hash         String
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  repoName  String
+  message   String
+  severity  String   @default("warning") // "warning" | "danger"
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}

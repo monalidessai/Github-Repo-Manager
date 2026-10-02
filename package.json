@@ -1,0 +1,19 @@
+{
+  "name": "pt-repo-manager-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "pnpm --filter @repo-manager/shared build && pnpm --filter backend build && pnpm --filter frontend build",
+    "dev:backend": "pnpm --filter backend dev",
+    "dev:frontend": "pnpm --filter frontend dev",
+    "dev": "pnpm --filter @repo-manager/shared build && concurrently -n \"backend,frontend\" -c \"blue,green\" \"pnpm dev:backend\" \"pnpm dev:frontend\"",
+    "db:push": "pnpm --filter backend db:push",
+    "db:generate": "pnpm --filter backend db:generate",
+    "db:seed": "pnpm --filter backend db:seed"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "nx": "^18.3.5",
+    "typescript": "^5.3.3"
+  }
+}
